@@ -49,7 +49,9 @@ def reduce_dimension_adjacency_matrix(adjacency_matrix,
     assert degree_matrix.shape[0] == adjacency_matrix.shape[0], "Adjacency and degree matrices don't have the same shape"
 
     # Remove the indexes from the keys list
-    keys = [keys[i] for i in range(len(keys)) if keys[i] not in idx_to_remove]
+    keys = [keys[i] for i in range(len(keys)) if i not in idx_to_remove]
+
+    assert len(keys) == adjacency_matrix.shape[0], "There are more keys than rows/colums in the adjacency matrix"
 
     return adjacency_matrix, degree_matrix, keys
 
