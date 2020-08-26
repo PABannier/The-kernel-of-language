@@ -157,13 +157,14 @@ if __name__ == '__main__':
     adjacency_matrix = np.zeros((voc_size, voc_size))
     
     for i, (word, definition) in tqdm(enumerate(english_dictionary.items()), total=voc_size):
-        adjacency_matrix = update_adjacency_matrix(
-            keys=keys,
-            adjacency_matrix=adjacency_matrix,
-            definition=definition,
-            word=word,
-            word_index=i
-        )
+        if word not in list(string.ascii_lowercase):
+            adjacency_matrix = update_adjacency_matrix(
+                keys=keys,
+                adjacency_matrix=adjacency_matrix,
+                definition=definition,
+                word=word,
+                word_index=i
+            )
     
     print('Matrix shape:', adjacency_matrix.shape)
         
