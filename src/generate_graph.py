@@ -3,34 +3,40 @@ import joblib
 from tqdm import tqdm
 import string
 import gc
+import re
 
 import h5py
 
 import nltk
 from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('stop_words')
+nltk.download('wordnet')
 
 STOP_WORDS = set(stopwords.words('english'))
 
 ACCEPTABLE_POS = [
     'JJ', 
-    'JJR', 
-    'JJS', 
+    'JJR',
+    'JJS',
     'NN', 
     'NNS', 
-    'NNP', 
-    'NNPS', 
-    'RB', 
-    'RBR', 
-    'RBS',
     'VB',
     'VBG', 
     'VBN',
     'VBP',
     'VBZ',
+]
+
+VERBAL_POS = [
+    'VB', 
+    'VBG',
+    'VBN',
+    'VBP',
+    'VBZ'
 ]
 
 def extract_tokens_from_definition(definition, word):
@@ -48,14 +54,35 @@ def extract_tokens_from_definition(definition, word):
         -------
         tokens (list): contains the tokens of the definition
     """
+
+    # Remove words between parenthesis
+    definition = str(definition)
+    definition = re.sub('\(.*\)', '', definition)
+
+    # Remove punctuation and make string lowercase
     definition = definition.translate(definition.maketrans('', '', string.punctuation)) 
     definition = definition.lower() 
+
+    # Tokenization and removing stop words
     tokens = nltk.word_tokenize(definition)  
     tokens = [x for x in tokens if x is not word] 
     tokens = [x for x in tokens if x not in STOP_WORDS]
 
+    # POS tagging
     tagged = nltk.pos_tag(tokens)
-    tokens = [x[0] for x in tagged if x[1] in ACCEPTABLE_POS]
+    tokens = [x for x in tagged if x[1] in ACCEPTABLE_POS]
+
+    # Converting verbs to base form
+    lemmatizer = WordNetLemmatizer()
+    tokens = [
+        lemmatizer.lemmatize(x[0], 'v') if x[1] in VERBAL_POS
+        else x[0]
+        for x in tokens
+    ]
+
+    tokens = [
+        lemmatizer.lemmatize(x) for x in tokens
+    ]
 
     return tokens
 
