@@ -16,7 +16,14 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('stop_words')
 nltk.download('wordnet')
 
-STOP_WORDS = set(stopwords.words('english'))
+STOP_WORDS = set(stopwords.words('french'))
+
+ADJACENCY_OUTFILE = '../data/french_adjacency_matrix.hdf5'
+DEGREE_OUTFILE = '../data/french_degree_matrix.hdf5'
+LAPLACIAN_OUTFILE = '../data/french_laplacian_matrix.hdf5'
+KEYS_OUTFILE = '../data/french_keys.pkl'
+
+DICT_INFILE = '../data/22000_words_list.pkl'
 
 ACCEPTABLE_POS = [
     'JJ', 
@@ -173,7 +180,7 @@ def save_obj(obj, outpath):
 
 if __name__ == '__main__':
     print('Opening English dictionary...')
-    with open('../data/english_dictionary.pkl', 'rb') as infile:
+    with open(DICT_INFILE, 'rb') as infile:
         english_dictionary = joblib.load(infile)
     
     print('Generate dictionary keys...')
@@ -205,10 +212,10 @@ if __name__ == '__main__':
         degree_matrix
     )
     
-    save_obj(adjacency_matrix, '../data/adjacency_matrix.hdf5')
-    save_obj(degree_matrix, '../data/degree_matrix.hdf5')
-    save_obj(laplacian_matrix, '../data/laplacian_matrix.hdf5')
+    save_obj(adjacency_matrix, ADJACENCY_OUTFILE)
+    save_obj(degree_matrix, DEGREE_OUTFILE)
+    save_obj(laplacian_matrix, LAPLACIAN_OUTFILE)
 
-    with open('../data/keys.pkl', 'wb') as infile:
+    with open(KEYS_OUTFILE, 'wb') as infile:
         joblib.dump(keys, infile) 
-        print('Successfully saved the keys dictionary...')
+        print('Successfully saved the keys dictionary.')
